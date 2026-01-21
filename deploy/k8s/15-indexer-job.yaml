@@ -1,0 +1,101 @@
+---
+# PersistentVolumeClaim for FAISS index
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: faiss-index-pvc
+  namespace: rag-demo
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+# ConfigMap with sample documents
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sample-docs
+  namespace: rag-demo
+data:
+  001_intro_to_rag.md: |
+    # Introduction to RAG Systems
+    
+    Retrieval-Augmented Generation (RAG) combines retrieval with language models.
+    
+    ## Key Components
+    - Document ingestion and chunking
+    - Vector embeddings (e.g., sentence-transformers)
+    - Vector store (e.g., FAISS)
+    - LLM generation (e.g., Ollama)
+    
+    RAG grounds responses in actual documents, reducing hallucination.
+  
+  002_k8s_autoscaling.md: |
+    # Kubernetes Autoscaling
+    
+    Kubernetes provides HPA (Horizontal Pod Autoscaler) for automatic scaling.
+    
+    ## Types
+    - HPA: Scales pods based on metrics
+    - VPA: Adjusts resource requests
+    - Cluster Autoscaler: Scales nodes
+    
+    CPU-based HPA works for compute-bound workloads.
+  
+  003_queue_depth.md: |
+    # Queue-Depth Autoscaling
+    
+    For I/O-bound workloads like LLM inference, scale on queue depth.
+    
+    ## Why?
+    - CPU stays low during network I/O
+    - Queue depth reflects actual backlog
+    - KEDA makes this easy
+    
+    Formula: replicas = ceil(queue_depth / threshold)
+---
+# Indexer Job - runs once to build FAISS index
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: indexer
+  namespace: rag-demo
+spec:
+  ttlSecondsAfterFinished: 300
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+      - name: indexer
+        image: rag-worker:latest
+        imagePullPolicy: IfNotPresent
+        command: ["python", "indexer.py"]
+        env:
+        - name: DOCS_DIR
+          value: "/app/data/docs"
+        - name: INDEX_DIR
+          value: "/app/data/faiss_index"
+        - name: EMBEDDING_MODEL
+          value: "sentence-transformers/all-MiniLM-L6-v2"
+        volumeMounts:
+        - name: docs
+          mountPath: /app/data/docs
+          readOnly: true
+        - name: faiss-index
+          mountPath: /app/data/faiss_index
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "2000m"
+      volumes:
+      - name: docs
+        configMap:
+          name: sample-docs
+      - name: faiss-index
+        persistentVolumeClaim:
+          claimName: faiss-index-pvc

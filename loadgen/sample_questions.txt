@@ -1,0 +1,72 @@
+# Sample questions for RAG testing
+# These questions are designed to test retrieval from the sample documents
+
+# RAG basics
+What is RAG and how does it work?
+Explain the main components of a RAG system.
+What are the benefits of using RAG over fine-tuning?
+How do vector embeddings work in RAG?
+What is the difference between chunking and embedding?
+
+# Kubernetes autoscaling
+How does the Horizontal Pod Autoscaler work in Kubernetes?
+What metrics does HPA use for scaling decisions?
+Explain the difference between HPA and VPA.
+How do I configure custom metrics autoscaling?
+What is the Cluster Autoscaler?
+
+# CPU scaling problems
+Why does CPU-based autoscaling fail for LLM workloads?
+What happens when LLM workers show low CPU but have high queue depth?
+How is LLM inference different from traditional compute workloads?
+What is I/O-bound processing?
+Why is queue depth a better metric than CPU for RAG workers?
+
+# KEDA
+What is KEDA and how does it extend Kubernetes autoscaling?
+How do I install KEDA in my cluster?
+Explain the ScaledObject resource in KEDA.
+What scalers does KEDA support?
+How do I configure KEDA to scale based on Prometheus metrics?
+
+# Prometheus
+What is Prometheus and how does it work?
+Explain the different metric types in Prometheus.
+How do I write a PromQL query for queue depth?
+What is a good scrape interval for worker metrics?
+How do I alert on high queue depth?
+
+# Redis queues
+How do I use Redis as a job queue?
+What Redis commands are used for queue operations?
+How do I get the length of a Redis list?
+What is the difference between RPOP and BRPOP?
+How do I store job results in Redis?
+
+# Ollama
+What is Ollama and how do I use it?
+How do I pull a model with Ollama?
+What API endpoints does Ollama expose?
+How do I connect to Ollama from a Docker container?
+What is the recommended model for RAG experiments?
+
+# FAISS
+What is FAISS and why use it for RAG?
+How do I save and load a FAISS index?
+What index types are available in FAISS?
+How do I search for similar vectors with FAISS?
+What is approximate nearest neighbor search?
+
+# LangChain
+What is LangChain used for?
+How do I create a RAG chain with LangChain?
+What document loaders does LangChain support?
+How do I use text splitters in LangChain?
+How do I integrate Ollama with LangChain?
+
+# Queue-depth scaling patterns
+What is queue-depth autoscaling?
+How do I calculate the right threshold for KEDA?
+What is a good cooldown period for scaling down?
+How do I handle traffic spikes with autoscaling?
+What anti-patterns should I avoid in queue-based scaling?

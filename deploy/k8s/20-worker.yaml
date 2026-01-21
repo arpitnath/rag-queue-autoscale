@@ -1,0 +1,76 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker
+  namespace: rag-demo
+  labels:
+    app: worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: worker
+  template:
+    metadata:
+      labels:
+        app: worker
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+      - name: worker
+        image: rag-worker:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: metrics
+          containerPort: 8000
+        env:
+        - name: REDIS_URL
+          value: "redis://redis:6379"
+        - name: QUEUE_NAME
+          value: "rag:jobs"
+        - name: INDEX_DIR
+          value: "/app/data/faiss_index"
+        # Using in-cluster Ollama service
+        - name: OLLAMA_BASE_URL
+          value: "http://ollama:11434"
+        - name: OLLAMA_MODEL
+          value: "mistral"
+        - name: TOP_K
+          value: "4"
+        - name: METRICS_PORT
+          value: "8000"
+        - name: WORKER_ID
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        volumeMounts:
+        - name: faiss-index
+          mountPath: /app/data/faiss_index
+          readOnly: true
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+        readinessProbe:
+          httpGet:
+            path: /metrics
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /metrics
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 15
+      volumes:
+      - name: faiss-index
+        persistentVolumeClaim:
+          claimName: faiss-index-pvc

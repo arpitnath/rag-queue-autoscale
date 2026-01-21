@@ -1,0 +1,48 @@
+services:
+  # Redis for job queue
+  redis:
+    image: redis:7-alpine
+    container_name: rag-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+
+  # RAG Worker
+  worker:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    container_name: rag-worker
+    depends_on:
+      redis:
+        condition: service_healthy
+    ports:
+      - "8000:8000"  # Metrics endpoint
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - QUEUE_NAME=rag:jobs
+      - INDEX_DIR=/app/data/faiss_index
+      - DOCS_DIR=/app/data/docs
+      # Mac/Windows: use host.docker.internal
+      # Linux: use host network or 172.17.0.1
+      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+      - OLLAMA_MODEL=${OLLAMA_MODEL:-mistral}
+      - TOP_K=4
+      - METRICS_PORT=8000
+      - WORKER_ID=worker-local
+    volumes:
+      # Mount docs for indexing
+      - ./data/docs:/app/data/docs:ro
+      # Persist FAISS index
+      - faiss-index:/app/data/faiss_index
+    restart: unless-stopped
+
+volumes:
+  redis-data:
+  faiss-index:

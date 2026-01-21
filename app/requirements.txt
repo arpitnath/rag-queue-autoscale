@@ -1,0 +1,30 @@
+# Pin NumPy to 1.x for compatibility with torch 2.2.0
+numpy<2.0
+
+# PyTorch (ARM Macs use unified builds - no separate CPU wheel)
+torch==2.2.0
+
+# Embeddings - use langchain-huggingface for newer compatibility
+langchain-huggingface>=0.0.3
+sentence-transformers>=2.6.0
+
+# Vector store
+faiss-cpu>=1.7.4
+
+# Core LangChain
+langchain>=0.2.0
+langchain-community>=0.2.0
+langchain-text-splitters>=0.2.0
+
+# LLM backend
+langchain-ollama>=0.1.0
+
+# Queue
+redis>=5.0.0
+
+# Metrics
+prometheus-client>=0.19.0
+
+# Utils
+python-dotenv>=1.0.0
+requests>=2.31.0
