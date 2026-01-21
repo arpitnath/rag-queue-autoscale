@@ -16,10 +16,7 @@ ENV PIP_RETRIES=5
 # Install Python dependencies
 COPY requirements.txt .
 
-# Install torch first (largest package) 
-RUN pip install --no-cache-dir --user torch==2.2.0
-
-# Install remaining dependencies
+# Install dependencies (no torch - using Ollama for embeddings)
 RUN pip install --no-cache-dir --user -r requirements.txt
 
 # -----------------------------------------------------------------------------
@@ -44,6 +41,7 @@ ENV REDIS_URL=redis://redis:6379 \
     DOCS_DIR=/app/data/docs \
     OLLAMA_BASE_URL=http://host.docker.internal:11434 \
     OLLAMA_MODEL=mistral \
+    EMBEDDING_MODEL=nomic-embed-text \
     METRICS_PORT=8000
 
 # Expose metrics port

@@ -77,8 +77,10 @@ spec:
           value: "/app/data/docs"
         - name: INDEX_DIR
           value: "/app/data/faiss_index"
+        - name: OLLAMA_BASE_URL
+          value: "http://ollama:11434"
         - name: EMBEDDING_MODEL
-          value: "sentence-transformers/all-MiniLM-L6-v2"
+          value: "nomic-embed-text"
         volumeMounts:
         - name: docs
           mountPath: /app/data/docs

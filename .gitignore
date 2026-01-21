@@ -43,3 +43,7 @@ htmlcov/
 
 # Demo output (generated during tests)
 demo-output/
+
+# Claude Capsule Kit (generated at runtime)
+.claude/**
+CLAUDE.md

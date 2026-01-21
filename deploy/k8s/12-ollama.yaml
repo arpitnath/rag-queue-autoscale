@@ -18,12 +18,42 @@ spec:
       labels:
         app: ollama
     spec:
+      initContainers:
+      - name: pull-models
+        image: ollama/ollama:latest
+        command: ["/bin/sh", "-c"]
+        args:
+          - |
+            echo "Starting Ollama to pull models..."
+            ollama serve &
+            sleep 10
+            echo "Pulling mistral model..."
+            ollama pull mistral
+            echo "Pulling nomic-embed-text embedding model..."
+            ollama pull nomic-embed-text
+            echo "Models pulled successfully"
+            pkill ollama || true
+        volumeMounts:
+        - name: ollama-data
+          mountPath: /root/.ollama
+        resources:
+          requests:
+            memory: "4Gi"
+            cpu: "1000m"
+          limits:
+            memory: "8Gi"
+            cpu: "4000m"
       containers:
       - name: ollama
         image: ollama/ollama:latest
         ports:
         - name: http
           containerPort: 11434
+        env:
+        - name: OLLAMA_NUM_PARALLEL
+          value: "10"  # Allow 10 concurrent requests
+        - name: OLLAMA_MAX_LOADED_MODELS
+          value: "2"   # Keep embedding + LLM models loaded
         resources:
           requests:
             memory: "4Gi"

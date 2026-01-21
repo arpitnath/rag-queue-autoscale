@@ -39,6 +39,8 @@ spec:
           value: "http://ollama:11434"
         - name: OLLAMA_MODEL
           value: "mistral"
+        - name: EMBEDDING_MODEL
+          value: "nomic-embed-text"
         - name: TOP_K
           value: "4"
         - name: METRICS_PORT
@@ -54,7 +56,7 @@ spec:
         resources:
           requests:
             memory: "256Mi"
-            cpu: "100m"
+            cpu: "500m"
           limits:
             memory: "1Gi"
             cpu: "1000m"

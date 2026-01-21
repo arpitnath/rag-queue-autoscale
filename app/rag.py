@@ -6,16 +6,15 @@ import os
 import time
 from pathlib import Path
 
-from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
-from langchain_ollama import OllamaLLM
+from langchain_ollama import OllamaLLM, OllamaEmbeddings
 from langchain_core.prompts import PromptTemplate
 
 from metrics import agent_retrieval_latency, agent_llm_latency
 
 # Configuration
 INDEX_DIR = os.getenv("INDEX_DIR", "./data/faiss_index")
-EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2")
+EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "nomic-embed-text")
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "mistral")
 TOP_K = int(os.getenv("TOP_K", "4"))
@@ -49,12 +48,11 @@ class RAGEngine:
         if self._initialized:
             return
 
-        # Load embeddings model
-        print(f"[rag] Loading embedding model: {EMBEDDING_MODEL}")
-        embeddings = HuggingFaceEmbeddings(
-            model_name=EMBEDDING_MODEL,
-            model_kwargs={"device": "cpu"},
-            encode_kwargs={"normalize_embeddings": True},
+        # Initialize Ollama embeddings (HTTP-based, I/O-bound)
+        print(f"[rag] Using Ollama embeddings: {EMBEDDING_MODEL} at {OLLAMA_BASE_URL}")
+        embeddings = OllamaEmbeddings(
+            base_url=OLLAMA_BASE_URL,
+            model=EMBEDDING_MODEL,
         )
 
         # Load FAISS index

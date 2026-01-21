@@ -10,13 +10,14 @@ from pathlib import Path
 
 from langchain_community.document_loaders import DirectoryLoader, TextLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_ollama import OllamaEmbeddings
 from langchain_community.vectorstores import FAISS
 
 # Configuration
 DOCS_DIR = os.getenv("DOCS_DIR", "./data/docs")
 INDEX_DIR = os.getenv("INDEX_DIR", "./data/faiss_index")
-EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2")
+OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "nomic-embed-text")
 CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", "500"))
 CHUNK_OVERLAP = int(os.getenv("CHUNK_OVERLAP", "50"))
 
@@ -67,12 +68,11 @@ def split_documents(docs: list) -> list:
 
 
 def create_embeddings():
-    """Initialize the embedding model."""
-    print(f"[indexer] Loading embedding model: {EMBEDDING_MODEL}")
-    embeddings = HuggingFaceEmbeddings(
-        model_name=EMBEDDING_MODEL,
-        model_kwargs={"device": "cpu"},
-        encode_kwargs={"normalize_embeddings": True},
+    """Initialize the Ollama embedding model (HTTP-based)."""
+    print(f"[indexer] Using Ollama embeddings: {EMBEDDING_MODEL} at {OLLAMA_BASE_URL}")
+    embeddings = OllamaEmbeddings(
+        base_url=OLLAMA_BASE_URL,
+        model=EMBEDDING_MODEL,
     )
     return embeddings
 

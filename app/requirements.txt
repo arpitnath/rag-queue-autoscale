@@ -1,15 +1,8 @@
-# Pin NumPy to 1.x for compatibility with torch 2.2.0
-numpy<2.0
-
-# PyTorch (ARM Macs use unified builds - no separate CPU wheel)
-torch==2.2.0
-
-# Embeddings - use langchain-huggingface for newer compatibility
-langchain-huggingface>=0.0.3
-sentence-transformers>=2.6.0
-
 # Vector store
 faiss-cpu>=1.7.4
+
+# NumPy for FAISS compatibility
+numpy>=1.24.0
 
 # Core LangChain
 langchain>=0.2.0
