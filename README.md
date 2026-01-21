@@ -4,6 +4,11 @@
 
 Companion repo for: **[The Autoscaler Was Working Perfectly. That's Why Our AI Agents Couldn't Scale.](#)**
 
+<p align="center">
+  <img src="./.github/main.jpeg" alt="Claude Capsule Kit" width="100%" />
+</p>
+
+
 ---
 
 ## The Problem
