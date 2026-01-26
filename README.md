@@ -2,7 +2,7 @@
 
 > CPU autoscaling fails for LLM inference. Queue-depth scaling works. **27 min → 43 sec (38x faster).**
 
-Companion repo for: **[The Autoscaler Was Working Perfectly. That's Why Our AI Agents Couldn't Scale.](#)**
+Companion repo for: **[The Autoscaler Was Working Perfectly. That's Why Our AI Agents Couldn't Scale.](https://medium.com/@arpitnath42/the-silent-failure-of-cpu-based-autoscaling-for-ai-workloads-94a560768d65?postPublishedType=initial)**
 
 <p align="center">
   <img src="./.github/main.jpeg" alt="Claude Capsule Kit" width="100%" />
